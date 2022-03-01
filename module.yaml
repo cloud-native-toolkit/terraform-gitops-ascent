@@ -1,32 +1,42 @@
-name: ""
-type: terraform
-description: ""
+name: gitops-ascent
+type: gitops
+description: Module to populate a GitOps repository with the resources to provision the Ascent tool.
 tags:
   - tools
   - gitops
 versions:
   - platforms:
-      - kubernetes
-      - ocp3
       - ocp4
     dependencies:
+      - id: ocp
+        refs:
+          - source: github.com/cloud-native-toolkit/terraform-ocp-login.git
+            version: '>= 1.2.4'
       - id: gitops
         refs:
           - source: github.com/cloud-native-toolkit/terraform-tools-gitops.git
-            version: ">= 1.1.0"
-      - id: cluster
-        refs:
-          - source: github.com/ibm-garage-cloud/terraform-ibm-container-platform
-            version: ">= 1.7.0"
-          - source: github.com/ibm-garage-cloud/terraform-ibm-ocp-vpc
-            version: ">= 1.0.0"
-          - source: github.com/ibm-garage-cloud/terraform-k8s-ocp-cluster
-            version: ">= 2.0.0"
+            version: '>= 1.1.0'
       - id: namespace
         refs:
           - source: github.com/cloud-native-toolkit/terraform-gitops-namespace.git
-            version: ">= 1.0.0"
+            version: '>= 1.0.0'
+      - id: mongo
+        refs:
+          - source: github.com/cloud-native-toolkit/terraform-gitops-mongo-ce.git
+            version: '>= 1.1.3'
+      - id: cos
+        refs:
+          - source: github.com/cloud-native-toolkit/terraform-ibm-object-storage.git
+            version: '>= 4.0.1'
     variables:
+      - name: platform
+        moduleRef:
+          id: ocp
+          output: platform
+      - name: server_url
+        moduleRef:
+          id: ocp
+          output: server_url
       - name: gitops_config
         moduleRef:
           id: gitops
@@ -39,18 +49,6 @@ versions:
         moduleRef:
           id: gitops
           output: server_name
-      - name: cluster_type
-        moduleRef:
-          id: cluster
-          output: platform.type_code
-      - name: cluster_ingress_hostname
-        moduleRef:
-          id: cluster
-          output: platform.ingress
-      - name: tls_secret_name
-        moduleRef:
-          id: cluster
-          output: platform.tls_secret
       - name: namespace
         moduleRef:
           id: namespace
@@ -59,3 +57,23 @@ versions:
         moduleRef:
           id: gitops
           output: sealed_secrets_cert
+      - name: mongo_hostname
+        moduleRef:
+          id: mongo
+          output: svcname
+      - name: mongo_port
+        moduleRef:
+          id: mongo
+          output: port
+      - name: mongo_username
+        moduleRef:
+          id: mongo
+          output: username
+      - name: mongo_password
+        moduleRef:
+          id: mongo
+          output: password
+      - name: cos_instance_id
+        moduleRef:
+          id: cos
+          output: id

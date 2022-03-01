@@ -1,18 +1,21 @@
 
-# Resource Group Variables
-variable "resource_group_name" {
+variable cluster_username { 
   type        = string
-  description = "Existing resource group where the IKS cluster will be provisioned."
+  description = "The username for AWS access"
 }
 
-variable "ibmcloud_api_key" {
+variable "cluster_password" {
   type        = string
-  description = "The api key for IBM Cloud access"
+  description = "The password for AWS access"
 }
 
-variable "region" {
+variable "server_url" {
   type        = string
-  description = "Region for VLANs defined in private_vlan_number and public_vlan_number."
+}
+
+variable "bootstrap_prefix" {
+  type = string
+  default = ""
 }
 
 variable "namespace" {
@@ -35,18 +38,6 @@ variable "cluster_exists" {
   type        = string
   description = "Flag indicating if the cluster already exists (true or false)"
   default     = "true"
-}
-
-variable "name_prefix" {
-  type        = string
-  description = "Prefix name that should be used for the cluster and services. If not provided then resource_group_name will be used"
-  default     = ""
-}
-
-variable "vpc_cluster" {
-  type        = bool
-  description = "Flag indicating that this is a vpc cluster"
-  default     = false
 }
 
 variable "git_token" {
@@ -76,4 +67,39 @@ variable "gitops_namespace" {
 }
 
 variable "git_username" {
+}
+
+variable "kubeseal_namespace" {
+  default = "sealed-secrets"
+}
+
+variable "cp_entitlement_key" {
+}
+
+variable "mongo_storageclass" {
+  type        = string
+  description = "Storageclass for MongoDB"
+  default     = "ibmc-vpc-block-10iops-tier"
+}
+
+variable "ibmcloud_api_key" {
+  type        = string
+  description = "The IBM Cloud api token"
+}
+
+variable "cos_instance_id" {
+  type        = string
+  description = "The Object Storage instance id"
+}
+
+variable "cos_bucket_storage_class" {
+  type        = string
+  description = "The storage class that you want to use for the bucket. Supported values are standard, vault, cold, flex, and smart."
+  default     = "standard"
+}
+
+variable "cos_bucket_cross_region_location" {
+  type        = string
+  description = "Cross-regional bucket location. Supported values are: us | eu | ap"
+  default     = "eu"
 }
