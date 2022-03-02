@@ -44,7 +44,7 @@ module "ascent" {
   mongo_port                = module.mongo.port
   mongo_username            = module.mongo.username
   mongo_password            = module.mongo.password
-  cos_instance_id           = module.cos.id
+  cos_instance_id           = var.cos_instance_id
   cos_bucket_storage_class  = var.cos_bucket_storage_class
   cos_bucket_cross_region_location  = var.cos_bucket_cross_region_location
 }
