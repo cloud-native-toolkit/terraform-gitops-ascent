@@ -1,4 +1,4 @@
-module "ascent" {
+module "gitops_module" {
   source = "./module"
 
   ibmcloud_api_key          = var.ibmcloud_api_key
