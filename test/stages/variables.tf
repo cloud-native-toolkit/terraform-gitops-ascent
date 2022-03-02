@@ -32,6 +32,7 @@ variable "cluster_name" {
 variable "cluster_type" {
   type        = string
   description = "The type of cluster that should be created (openshift or kubernetes)"
+  default     = "openshift"
 }
 
 variable "cluster_exists" {

@@ -100,6 +100,12 @@ variable "server_url" {
   description = "The url of the control server"
 }
 
+variable "cluster_type" {
+  type        = string
+  description = "The type of cluster that should be created (openshift or kubernetes)"
+  default     = "openshift"
+}
+
 variable "auth_strategy" {
   type = string
   description = "Ascent authentication strategy to be used: openshift | appid "

@@ -27,10 +27,10 @@ locals {
       port = 80
     }
     route = {
-      enabled = local.cluster_type == "openshift" ? true : false
+      enabled = var.cluster_type == "openshift" ? true : false
     }
     ingress = {
-      enabled = local.cluster_type == "openshift" ? false : true
+      enabled = var.cluster_type == "openshift" ? false : true
       appid = {
         enabled = false
         requestType = "web"
@@ -68,10 +68,10 @@ locals {
       port = 80
     }
     route = {
-      enabled = local.cluster_type == "openshift" ? true : false
+      enabled = var.cluster_type == "openshift" ? true : false
     }
     ingress = {
-      enabled = local.cluster_type == "openshift" ? false : true
+      enabled = var.cluster_type == "openshift" ? false : true
       appid = {
         enabled = false
         requestType = "web"
