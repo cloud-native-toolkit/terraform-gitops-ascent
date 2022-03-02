@@ -1,7 +1,9 @@
 locals {
   name          = "ascent"
   bin_dir       = module.setup_clis.bin_dir
-  yaml_dir      = "${path.cwd}/.tmp/${local.name}/chart/${local.name}"
+  tmp_dir       = "${path.cwd}/.tmp/${local.name}"
+  yaml_dir      = "${local.tmp_dir}/chart"
+  secrets_dir   = "${local.tmp_dir}/secrets"
   ingress_host  = "ascent-ui-${var.namespace}.${var.platform.ingress}"
   service_url   = "http${var.platform.tls_secret != "" ? "s" : ""}://${local.ingress_host}"
   global = {
@@ -124,11 +126,25 @@ resource null_resource create_yaml {
     command = "${path.module}/scripts/create-yaml.sh '${local.name}' '${local.yaml_dir}' '${local.namespace}'"
 
     environment = {
-      IBMCLOUD_API_KEY = var.ibmcloud_api_key
       BFF_VALUES      = yamlencode(local.bff_values)
       UI_VALUES       = yamlencode(local.ui_values)
-      SERVER_URL      = var.server_url
       SERVICE_URL     = local.service_url
+      AUTH_STRATEGY   = var.auth_strategy
+      AUTH_TOKEN      = data.external.auth_token.result.token
+      INSTANCE_ID     = data.external.instance_id.result.token
+    }
+  }
+}
+
+resource null_resource create_secrets {
+  depends_on = [null_resource.create_yaml]
+
+  provisioner "local-exec" {
+    command = "${path.module}/scripts/create-secrets.sh '${var.namespace}' '${local.secrets_dir}'"
+
+    environment = {
+      IBMCLOUD_API_KEY = var.ibmcloud_api_key
+      SERVER_URL      = var.server_url
       AUTH_STRATEGY   = var.auth_strategy
       AUTH_TOKEN      = data.external.auth_token.result.token
       MONGO_HOSTNAME  = var.mongo_hostname
@@ -142,37 +158,27 @@ resource null_resource create_yaml {
   }
 }
 
-resource null_resource setup_gitops {
-  depends_on = [null_resource.create_yaml]
+module seal_secrets {
+  depends_on = [null_resource.create_secrets]
 
-  triggers = {
-    name = local.name
-    namespace = var.namespace
-    yaml_dir = local.yaml_dir
-    server_name = var.server_name
-    layer = local.layer
-    type = local.type
-    git_credentials = yamlencode(var.git_credentials)
-    gitops_config   = yamlencode(var.gitops_config)
-    bin_dir = local.bin_dir
-  }
+  source = "github.com/cloud-native-toolkit/terraform-util-seal-secrets.git?ref=v1.0.0"
 
-  provisioner "local-exec" {
-    command = "${self.triggers.bin_dir}/igc gitops-module '${self.triggers.name}' -n '${self.triggers.namespace}' --contentDir '${self.triggers.yaml_dir}' --serverName '${self.triggers.server_name}' -l '${self.triggers.layer}' --type '${self.triggers.type}'"
+  source_dir    = local.secrets_dir
+  dest_dir      = "${local.yaml_dir}/secrets"
+  kubeseal_cert = var.kubeseal_cert
+  label         = local.name
+}
 
-    environment = {
-      GIT_CREDENTIALS = nonsensitive(self.triggers.git_credentials)
-      GITOPS_CONFIG   = self.triggers.gitops_config
-    }
-  }
+resource gitops_module module {
+  depends_on = [null_resource.create_yaml, module.seal_secrets]
 
-  provisioner "local-exec" {
-    when = destroy
-    command = "${self.triggers.bin_dir}/igc gitops-module '${self.triggers.name}' -n '${self.triggers.namespace}' --delete --contentDir '${self.triggers.yaml_dir}' --serverName '${self.triggers.server_name}' -l '${self.triggers.layer}' --type '${self.triggers.type}'"
-
-    environment = {
-      GIT_CREDENTIALS = nonsensitive(self.triggers.git_credentials)
-      GITOPS_CONFIG   = self.triggers.gitops_config
-    }
-  }
+  name        = local.name
+  namespace   = var.namespace
+  content_dir = local.yaml_dir
+  server_name = var.server_name
+  layer       = local.layer
+  type        = local.type
+  branch      = local.application_branch
+  config      = yamlencode(var.gitops_config)
+  credentials = yamlencode(var.git_credentials)
 }
