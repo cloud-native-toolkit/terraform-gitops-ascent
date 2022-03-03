@@ -6,6 +6,7 @@ locals {
   secrets_dir   = "${local.tmp_dir}/secrets"
   ingress_host  = "ascent-ui-${var.namespace}.${var.platform.ingress}"
   service_url   = "http${var.platform.tls_secret != "" ? "s" : ""}://${local.ingress_host}"
+  instance_id   = data.external.instance_id.result.token
   global = {
     ingressSubdomain = var.platform.ingress
     clusterType = "openshift"
@@ -106,16 +107,13 @@ module setup_clis {
 data "external" "auth_token" {
   program = ["${path.module}/token.sh"]
 }
-data "external" "mongo_root_password" {
-  program = ["${path.module}/token.sh"]
-}
 data "external" "instance_id" {
   program = ["${path.module}/token.sh"]
 }
 
 # Create COS Bucket
 resource "ibm_cos_bucket" "ascent_bucket" {
-  bucket_name          = "ascent-storage-${data.external.instance_id.result.token}"
+  bucket_name          = "ascent-storage-${local.instance_id}"
   resource_instance_id = var.cos_instance_id
   region_location      = var.cos_bucket_cross_region_location
   storage_class        = var.cos_bucket_storage_class
@@ -131,7 +129,7 @@ resource null_resource create_yaml {
       SERVICE_URL     = local.service_url
       AUTH_STRATEGY   = var.auth_strategy
       AUTH_TOKEN      = data.external.auth_token.result.token
-      INSTANCE_ID     = data.external.instance_id.result.token
+      INSTANCE_ID     = local.instance_id
     }
   }
 }
@@ -151,7 +149,7 @@ resource null_resource create_secrets {
       MONGO_PORT      = var.mongo_port
       MONGO_USERNAME  = var.mongo_username
       MONGO_PASSWORD  = var.mongo_password
-      INSTANCE_ID     = data.external.instance_id.result.token
+      INSTANCE_ID     = local.instance_id
       COS_INSTANCE_ID = ibm_cos_bucket.ascent_bucket.resource_instance_id
       COS_REGION      = ibm_cos_bucket.ascent_bucket.region_location
     }
