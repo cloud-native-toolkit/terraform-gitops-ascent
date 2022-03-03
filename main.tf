@@ -91,7 +91,7 @@ locals {
     connectsTo = "ascent-bff"
     runtime = "js"
   }
-  layer = "application"
+  layer = "applications"
   type  = "base"
   application_branch = "main"
   namespace = var.namespace
