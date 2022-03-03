@@ -39,8 +39,8 @@ jobs:
           TF_VAR_git_token: ${{ secrets.GIT_ADMIN_TOKEN }}
           TF_VAR_ibmcloud_api_key: ${{ secrets.IBMCLOUD_API_KEY }}
           TF_VAR_cp_entitlement_key: ${{ secrets.CP_ENTITLEMENT_KEY }}
-          TF_VAR_cluster_username: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
-          TF_VAR_cluster_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
+          TF_VAR_cluster_username: "apikey"
+          TF_VAR_cluster_password: ${{ secrets.IBMCLOUD_API_KEY }}
           TF_VAR_cos_instance_id: ${{ env.COS_INSTANCE_ID }}
           IBMCLOUD_API_KEY: ${{ secrets.IBMCLOUD_API_KEY }}
 
@@ -54,8 +54,8 @@ jobs:
           TF_VAR_git_token: ${{ secrets.GIT_ADMIN_TOKEN }}
           TF_VAR_ibmcloud_api_key: ${{ secrets.IBMCLOUD_API_KEY }}
           TF_VAR_cp_entitlement_key: ${{ secrets.CP_ENTITLEMENT_KEY }}
-          TF_VAR_cluster_username: ${{ steps.variables.outputs.CLUSTER_USERNAME }}
-          TF_VAR_cluster_password: ${{ steps.variables.outputs.CLUSTER_PASSWORD }}
+          TF_VAR_cluster_username: "apikey"
+          TF_VAR_cluster_password: ${{ secrets.IBMCLOUD_API_KEY }}
           TF_VAR_cos_instance_id: ${{ env.COS_INSTANCE_ID }}
           IBMCLOUD_API_KEY: ${{ secrets.IBMCLOUD_API_KEY }}
 

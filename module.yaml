@@ -7,6 +7,18 @@ tags:
 versions:
   - platforms:
       - ocp4
+    providers:
+      - name: gitops
+        source: cloud-native-toolkit/gitops
+        dependencies:
+          - id: clis
+            refs:
+              - source: github.com/cloud-native-toolkit/terraform-util-clis.git
+        variables:
+          - name: bin_dir
+            moduleRef:
+              id: clis
+              output: bin_dir
     dependencies:
       - id: ocp
         refs:
