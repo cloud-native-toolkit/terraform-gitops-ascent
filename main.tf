@@ -113,6 +113,8 @@ data "external" "instance_id" {
 
 # Create COS Bucket
 resource "ibm_cos_bucket" "ascent_bucket" {
+  depends_on=[data.external.instance_id]
+
   bucket_name          = "ascent-storage-${local.instance_id}"
   resource_instance_id = var.cos_instance_id
   region_location      = var.cos_bucket_cross_region_location
