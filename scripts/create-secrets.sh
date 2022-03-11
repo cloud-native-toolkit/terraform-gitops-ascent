@@ -6,7 +6,7 @@ DEST_DIR="$2"
 mkdir -p "${DEST_DIR}"
 
 # Authentication Config
-if [[ -n $AUTH_STRATEGY && $AUTH_STRATEGY == 'openshift-oauth' ]]; then
+if [[ -n $AUTH_STRATEGY && $AUTH_STRATEGY == 'openshift' ]]; then
   # Create OAuth secret
   kubectl create secret generic ascent-oauth-config \
     -n ${NAMESPACE} \
@@ -18,7 +18,7 @@ elif [[ -n $AUTH_STRATEGY && $AUTH_STRATEGY == 'appid' ]]; then
   echo 'AppID auth not yet implemented'
   exit 1
 else
-  echo "Supported authentication strategy: openshift-oauth | appid"
+  echo "Supported authentication strategy: openshift | appid"
   echo "Found: $AUTH_STRATEGY"
   exit 1
 fi
