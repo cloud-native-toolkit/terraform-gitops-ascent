@@ -92,6 +92,7 @@ locals {
     connectsTo = "ascent-bff"
     runtime = "js"
   }
+  mongo_name = "ascent-mongodb"
   mongodb_values = {
     image = {
       registry = "docker.io"
