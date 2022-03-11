@@ -2,6 +2,7 @@ module "gitops_module" {
   source = "./module"
 
   ibmcloud_api_key          = var.ibmcloud_api_key
+  region                    = var.region
   platform                  = module.dev_cluster.platform
   server_url                = module.dev_cluster.server_url
   gitops_config             = module.gitops.gitops_config

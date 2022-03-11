@@ -82,6 +82,11 @@ variable "ibmcloud_api_key" {
   description = "The IBM Cloud api token"
 }
 
+variable "region" {
+  type        = string
+  description = "The IBM Cloud region"
+}
+
 variable "cos_instance_id" {
   type        = string
   description = "The Object Storage instance id"

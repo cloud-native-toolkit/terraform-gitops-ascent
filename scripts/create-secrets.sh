@@ -31,7 +31,7 @@ kubectl create secret generic ascent-mongo-config \
   --output=yaml > "${DEST_DIR}/ascent-mongo-config.yaml"
 
 # Create IBM Cloud Object Storage secret
-ibmcloud login --apikey ${IBMCLOUD_API_KEY}
+ibmcloud login --apikey ${IBMCLOUD_API_KEY} -r ${REGION}
 COS_CREDENTIALS=$(ibmcloud resource service-key-create ascent-${INSTANCE_ID} Manager --instance-id ${COS_INSTANCE_ID} --output JSON | jq .credentials | jq ". |= . + {\"endpoints\": \"s3.${COS_REGION}.cloud-object-storage.appdomain.cloud\"}")
 kubectl create secret generic ascent-cos-config \
   -n ${NAMESPACE} \

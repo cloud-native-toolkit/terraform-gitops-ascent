@@ -32,6 +32,7 @@ module "ascent" {
   source = "github.com/cloud-native-toolkit/terraform-gitops-ascent"
 
   ibmcloud_api_key          = var.ibmcloud_api_key
+  region                    = var.region
   platform                  = module.ocp-login.platform
   server_url                = module.ocp-login.server_url
   gitops_config             = module.gitops.gitops_config

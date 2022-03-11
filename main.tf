@@ -187,6 +187,7 @@ resource null_resource create_secrets {
 
     environment = {
       IBMCLOUD_API_KEY = var.ibmcloud_api_key
+      REGION          = var.region
       SERVER_URL      = var.server_url
       AUTH_STRATEGY   = var.auth_strategy
       AUTH_TOKEN      = data.external.auth_token.result.token

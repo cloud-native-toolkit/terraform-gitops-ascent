@@ -3,6 +3,11 @@ variable "ibmcloud_api_key" {
   description = "The IBM Cloud api token"
 }
 
+variable "region" {
+  type        = string
+  description = "The IBM Cloud region"
+}
+
 variable "gitops_config" {
   type = object({
     boostrap = object({
