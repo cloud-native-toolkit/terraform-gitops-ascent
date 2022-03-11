@@ -92,6 +92,41 @@ locals {
     connectsTo = "ascent-bff"
     runtime = "js"
   }
+  mongodb_values = {
+    image = {
+      registry = "docker.io"
+      repository = "bitnami/mongodb"
+      tag = "4.4.9-debian-10-r0"
+      pullPolicy = "IfNotPresent"
+    }
+
+    auth = {
+      enabled = true
+      rootUser = "root"
+      rootPassword = data.external.mongo_root_password.result.token
+      username = "ascent-admin"
+      password = data.external.mongo_password.result.token
+      database = "ascent-db"
+    }
+
+    service = {
+      port = 27017
+    }
+
+    podSecurityContext = {
+      enabled = false
+    }
+
+    containerSecurityContext = {
+      enabled = false
+    }
+
+    persistence = {
+      enabled = true
+      size = "10Gi"
+      mountPath = "/bitnami/mongodb"
+    }
+  }
   layer = "applications"
   type  = "base"
   application_branch = "main"
@@ -105,6 +140,12 @@ module setup_clis {
 
 # Credentials randomly created
 data "external" "auth_token" {
+  program = ["${path.module}/token.sh"]
+}
+data "external" "mongo_root_password" {
+  program = ["${path.module}/token.sh"]
+}
+data "external" "mongo_password" {
   program = ["${path.module}/token.sh"]
 }
 data "external" "instance_id" {
@@ -128,6 +169,7 @@ resource null_resource create_yaml {
     environment = {
       BFF_VALUES      = yamlencode(local.bff_values)
       UI_VALUES       = yamlencode(local.ui_values)
+      MONGODB_VALUES  = yamlencode(local.mongodb_values)
       SERVICE_URL     = local.service_url
       AUTH_STRATEGY   = var.auth_strategy
       AUTH_TOKEN      = data.external.auth_token.result.token
@@ -147,10 +189,10 @@ resource null_resource create_secrets {
       SERVER_URL      = var.server_url
       AUTH_STRATEGY   = var.auth_strategy
       AUTH_TOKEN      = data.external.auth_token.result.token
-      MONGO_HOSTNAME  = var.mongo_hostname
-      MONGO_PORT      = var.mongo_port
-      MONGO_USERNAME  = var.mongo_username
-      MONGO_PASSWORD  = var.mongo_password
+      MONGO_HOSTNAME  = local.mongo_name
+      MONGO_PORT      = local.mongodb_values.service.port
+      MONGO_USERNAME  = local.mongodb_values.auth.username
+      MONGO_PASSWORD  = data.external.mongo_password.result.token
       INSTANCE_ID     = local.instance_id
       COS_INSTANCE_ID = ibm_cos_bucket.ascent_bucket.resource_instance_id
       COS_REGION      = ibm_cos_bucket.ascent_bucket.region_location

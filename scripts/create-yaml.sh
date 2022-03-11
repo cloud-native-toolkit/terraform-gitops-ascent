@@ -7,7 +7,7 @@ NAME="$1"
 DEST_DIR="$2"
 NAMESPACE="$3"
 
-find "${DEST_DIR}" -name "*"
+mkdir -p "${DEST_DIR}"
 
 cp -R ${MODULE_DIR}/chart/* ${DEST_DIR}
 if [[ -n "${BFF_VALUES}" ]]; then
@@ -16,10 +16,13 @@ fi
 if [[ -n "${UI_VALUES}" ]]; then
   echo "${UI_VALUES}" > "${DEST_DIR}/ascent-ui/values.yaml"
 fi
+if [[ -n "${MONGODB_VALUES}" ]]; then
+  echo "${MONGODB_VALUES}" > "${DEST_DIR}/ascent-mongodb/values.yaml"
+fi
 
 # Authentication Config
 
-if [[ -n $AUTH_STRATEGY && $AUTH_STRATEGY == 'openshift-oauth' ]]; then
+if [[ -n $AUTH_STRATEGY && $AUTH_STRATEGY == 'openshift' ]]; then
 
 # Create OpenShift OAuth Client
 cat > "${DEST_DIR}/ascent-oauth-client.yaml" <<EOF
@@ -42,7 +45,7 @@ exit 1
 
 else
 
-echo "Supported authentication strategy: openshift-oauth | appid"
+echo "Supported authentication strategy: openshift | appid"
 echo "Found: $AUTH_STRATEGY"
 exit 1
 

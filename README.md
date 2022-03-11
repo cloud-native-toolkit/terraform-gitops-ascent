@@ -23,7 +23,6 @@ This module makes use of the output from other modules:
 - OpenShift Login - github.com/cloud-native-toolkit/terraform-ocp-login.git
 - GitOps - github.com/cloud-native-toolkit/terraform-tools-gitops.git
 - Namespace - github.com/cloud-native-toolkit/terraform-gitops-namespace.git
-- Mongo CE - github.com/cloud-native-toolkit/terraform-gitops-mongo-ce
 - IBM Cloud Object Storage - github.com/cloud-native-toolkit/terraform-ibm-object-storage
 
 ## Example usage
@@ -40,10 +39,6 @@ module "ascent" {
   server_name               = module.gitops.server_name
   namespace                 = module.namespace.name
   kubeseal_cert             = module.gitops.sealed_secrets_cert
-  mongo_hostname            = module.mongo.svcname
-  mongo_port                = module.mongo.port
-  mongo_username            = module.mongo.username
-  mongo_password            = module.mongo.password
   cos_instance_id           = var.cos_instance_id
   cos_bucket_storage_class  = var.cos_bucket_storage_class
   cos_bucket_cross_region_location  = var.cos_bucket_cross_region_location

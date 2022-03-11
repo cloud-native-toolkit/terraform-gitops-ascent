@@ -77,12 +77,6 @@ variable "kubeseal_namespace" {
 variable "cp_entitlement_key" {
 }
 
-variable "mongo_storageclass" {
-  type        = string
-  description = "Storageclass for MongoDB"
-  default     = "ibmc-vpc-block-10iops-tier"
-}
-
 variable "ibmcloud_api_key" {
   type        = string
   description = "The IBM Cloud api token"

@@ -1,0 +1,30 @@
+global: {}
+
+mongodb:
+  image:
+    registry: docker.io
+    repository: bitnami/mongodb
+    tag: 4.4.9-debian-10-r0
+    pullPolicy: IfNotPresent
+
+  auth:
+    enabled: true
+    rootUser: root
+    rootPassword: <YOUR_ROOT_PASSWORD>
+    username: ascent-admin
+    password: <YOUR_PASSWORD>
+    database: "ascent-db"
+
+  podSecurityContext:
+    enabled: false
+
+  containerSecurityContext:
+    enabled: false
+
+  persistence:
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+    annotations: {}
+    mountPath: /bitnami/mongodb

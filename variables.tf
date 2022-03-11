@@ -112,26 +112,6 @@ variable "auth_strategy" {
   default = "openshift"
 }
 
-variable "mongo_hostname" {
-  type = string
-  description = "Hostname of the Mongo instance"
-}
-
-variable "mongo_port" {
-  type = string
-  description = "Mongo port"
-}
-
-variable "mongo_username" {
-  type = string
-  description = "Mongo admin user"
-}
-
-variable "mongo_password" {
-  type = string
-  description = "Mongo admin password"
-}
-
 variable "cos_instance_id" {
   type        = string
   description = "The Object Storage instance id"
