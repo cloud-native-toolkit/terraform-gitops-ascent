@@ -1,32 +1,46 @@
-name: ""
-type: terraform
-description: ""
+name: gitops-ascent
+type: gitops
+description: Module to populate a GitOps repository with the resources to provision the Ascent tool.
 tags:
   - tools
   - gitops
 versions:
   - platforms:
-      - kubernetes
-      - ocp3
       - ocp4
+    providers:
+      - name: gitops
+        source: cloud-native-toolkit/gitops
+        dependencies:
+          - id: clis
+            refs:
+              - source: github.com/cloud-native-toolkit/terraform-util-clis.git
+        variables:
+          - name: bin_dir
+            moduleRef:
+              id: clis
+              output: bin_dir
     dependencies:
+      - id: ocp
+        refs:
+          - source: github.com/cloud-native-toolkit/terraform-ocp-login.git
+            version: '>= 1.2.4'
       - id: gitops
         refs:
           - source: github.com/cloud-native-toolkit/terraform-tools-gitops.git
-            version: ">= 1.1.0"
-      - id: cluster
-        refs:
-          - source: github.com/ibm-garage-cloud/terraform-ibm-container-platform
-            version: ">= 1.7.0"
-          - source: github.com/ibm-garage-cloud/terraform-ibm-ocp-vpc
-            version: ">= 1.0.0"
-          - source: github.com/ibm-garage-cloud/terraform-k8s-ocp-cluster
-            version: ">= 2.0.0"
+            version: '>= 1.1.0'
       - id: namespace
         refs:
           - source: github.com/cloud-native-toolkit/terraform-gitops-namespace.git
-            version: ">= 1.0.0"
+            version: '>= 1.0.0'
     variables:
+      - name: platform
+        moduleRef:
+          id: ocp
+          output: platform
+      - name: server_url
+        moduleRef:
+          id: ocp
+          output: server_url
       - name: gitops_config
         moduleRef:
           id: gitops
@@ -39,18 +53,6 @@ versions:
         moduleRef:
           id: gitops
           output: server_name
-      - name: cluster_type
-        moduleRef:
-          id: cluster
-          output: platform.type_code
-      - name: cluster_ingress_hostname
-        moduleRef:
-          id: cluster
-          output: platform.ingress
-      - name: tls_secret_name
-        moduleRef:
-          id: cluster
-          output: platform.tls_secret
       - name: namespace
         moduleRef:
           id: namespace
