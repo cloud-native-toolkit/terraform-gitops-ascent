@@ -1,7 +1,7 @@
 locals {
   name          = "ascent"
   bin_dir       = module.setup_clis.bin_dir
-  tmp_dir       = "${path.cwd}/.tmp/${local.name}"
+  tmp_dir       = "${path.cwd}/.tmp"
   yaml_dir      = "${local.tmp_dir}/chart"
   secrets_dir   = "${local.tmp_dir}/secrets"
   ingress_host  = "ascent-ui-${var.namespace}.${var.platform.ingress}"
@@ -208,17 +208,59 @@ module seal_secrets {
   source = "github.com/cloud-native-toolkit/terraform-util-seal-secrets.git?ref=v1.0.0"
 
   source_dir    = local.secrets_dir
-  dest_dir      = "${local.yaml_dir}/secrets"
+  dest_dir      = "${local.yaml_dir}/ascent-config"
   kubeseal_cert = var.kubeseal_cert
   label         = local.name
 }
 
-resource gitops_module module {
+resource gitops_module ascent_config {
   depends_on = [null_resource.create_yaml, module.seal_secrets]
 
   name        = local.name
   namespace   = var.namespace
-  content_dir = local.yaml_dir
+  content_dir = "${local.yaml_dir}/ascent-config"
+  server_name = var.server_name
+  layer       = local.layer
+  type        = local.type
+  branch      = local.application_branch
+  config      = yamlencode(var.gitops_config)
+  credentials = yamlencode(var.git_credentials)
+}
+
+resource gitops_module ascent_mongodb {
+  depends_on = [null_resource.create_yaml, module.seal_secrets]
+
+  name        = local.name
+  namespace   = var.namespace
+  content_dir = "${local.yaml_dir}/ascent-mongodb"
+  server_name = var.server_name
+  layer       = local.layer
+  type        = local.type
+  branch      = local.application_branch
+  config      = yamlencode(var.gitops_config)
+  credentials = yamlencode(var.git_credentials)
+}
+
+resource gitops_module ascent_bff {
+  depends_on = [null_resource.create_yaml, module.seal_secrets]
+
+  name        = local.name
+  namespace   = var.namespace
+  content_dir = "${local.yaml_dir}/ascent-bff"
+  server_name = var.server_name
+  layer       = local.layer
+  type        = local.type
+  branch      = local.application_branch
+  config      = yamlencode(var.gitops_config)
+  credentials = yamlencode(var.git_credentials)
+}
+
+resource gitops_module ascent_ui {
+  depends_on = [null_resource.create_yaml, module.seal_secrets]
+
+  name        = local.name
+  namespace   = var.namespace
+  content_dir = "${local.yaml_dir}/ascent-ui"
   server_name = var.server_name
   layer       = local.layer
   type        = local.type

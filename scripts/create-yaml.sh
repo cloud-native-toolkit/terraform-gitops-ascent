@@ -7,7 +7,7 @@ NAME="$1"
 DEST_DIR="$2"
 NAMESPACE="$3"
 
-mkdir -p "${DEST_DIR}"
+mkdir -p "${DEST_DIR}"/ascent-config
 
 cp -R ${MODULE_DIR}/chart/* ${DEST_DIR}
 if [[ -n "${BFF_VALUES}" ]]; then
@@ -25,7 +25,7 @@ fi
 if [[ -n $AUTH_STRATEGY && $AUTH_STRATEGY == 'openshift' ]]; then
 
 # Create OpenShift OAuth Client
-cat > "${DEST_DIR}/ascent-oauth-client.yaml" <<EOF
+cat > "${DEST_DIR}/ascent-config/ascent-oauth-client.yaml" <<EOF
 apiVersion: oauth.openshift.io/v1
 grantMethod: auto
 kind: OAuthClient
@@ -52,7 +52,7 @@ exit 1
 fi
 
 # Ascent ConfigMap
-cat > "${DEST_DIR}/ascent-configmap.yaml" <<EOF
+cat > "${DEST_DIR}/ascent-config/ascent-configmap.yaml" <<EOF
 apiVersion: v1
 kind: ConfigMap
 metadata:
