@@ -216,7 +216,7 @@ module seal_secrets {
 resource gitops_module ascent_config {
   depends_on = [null_resource.create_yaml, module.seal_secrets]
 
-  name        = local.name
+  name        = "${local.name}-config"
   namespace   = var.namespace
   content_dir = "${local.yaml_dir}/ascent-config"
   server_name = var.server_name
@@ -230,7 +230,7 @@ resource gitops_module ascent_config {
 resource gitops_module ascent_mongodb {
   depends_on = [null_resource.create_yaml, module.seal_secrets]
 
-  name        = local.name
+  name        = "${local.name}-mongodb"
   namespace   = var.namespace
   content_dir = "${local.yaml_dir}/ascent-mongodb"
   server_name = var.server_name
@@ -244,7 +244,7 @@ resource gitops_module ascent_mongodb {
 resource gitops_module ascent_bff {
   depends_on = [null_resource.create_yaml, module.seal_secrets]
 
-  name        = local.name
+  name        = "${local.name}-bff"
   namespace   = var.namespace
   content_dir = "${local.yaml_dir}/ascent-bff"
   server_name = var.server_name
@@ -258,9 +258,9 @@ resource gitops_module ascent_bff {
 resource gitops_module module {
   depends_on = [null_resource.create_yaml, module.seal_secrets]
 
-  name        = local.name
+  name        = "${local.name}-ui"
   namespace   = var.namespace
-  content_dir = "${local.yaml_dir}/ascent-ui"
+  content_dir = "${local.yaml_dir}/${local.name}-ui"
   server_name = var.server_name
   layer       = local.layer
   type        = local.type
