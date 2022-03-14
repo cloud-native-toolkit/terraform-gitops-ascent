@@ -255,7 +255,7 @@ resource gitops_module ascent_bff {
   credentials = yamlencode(var.git_credentials)
 }
 
-resource gitops_module ascent_ui {
+resource gitops_module module {
   depends_on = [null_resource.create_yaml, module.seal_secrets]
 
   name        = local.name
